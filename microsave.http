@@ -1,0 +1,157 @@
+### =========================
+### MEMBERS
+### =========================
+
+### Get all members
+GET http://localhost:8080/api/members
+
+
+### Get member by ID
+GET http://localhost:8080/api/members/1
+
+
+### Create member
+POST http://localhost:8080/api/members
+Content-Type: application/json
+
+{
+  "name": "Kumar",
+  "phone": "9876543210",
+  "address": "Coimbatore",
+  "joinDate": "2026-09-28"
+}
+
+
+### Update member
+PUT http://localhost:8080/api/members/1
+Content-Type: application/json
+
+{
+  "name": "Thamarai Selvan Updated",
+  "phone": "9876543211",
+  "address": "Coimbatore",
+  "joinDate": "2026-09-28"
+}
+
+
+### Delete member
+DELETE http://localhost:8080/api/members/1
+
+
+
+### =========================
+### SAVINGS
+### =========================
+
+### Get all savings
+GET http://localhost:8080/api/savings
+
+
+### Get saving by ID
+GET http://localhost:8080/api/savings/1
+
+
+### Create saving for member 1
+POST http://localhost:8080/api/savings/member/1
+Content-Type: application/json
+
+{
+  "amount": 500,
+  "contributionDate": "2026-09-28"
+}
+
+
+### Update saving
+PUT http://localhost:8080/api/savings/1
+Content-Type: application/json
+
+{
+  "amount": 700,
+  "contributionDate": "2026-09-28"
+}
+
+
+### Delete saving
+DELETE http://localhost:8080/api/savings/1
+
+
+
+### =========================
+### LOANS
+### =========================
+
+### Check available group balance
+GET http://localhost:8080/api/loans/balance
+
+
+### Get all loans
+GET http://localhost:8080/api/loans
+
+
+### Get loan by ID
+GET http://localhost:8080/api/loans/1
+
+
+### Create loan for member 1
+POST http://localhost:8080/api/loans/member/1
+Content-Type: application/json
+
+{
+  "amount": 1000,
+  "loanDate": "2026-09-28",
+  "outstandingAmount": 1000,
+  "status": "ACTIVE"
+}
+
+
+### Update loan
+PUT http://localhost:8080/api/loans/1
+Content-Type: application/json
+
+{
+  "amount": 1000,
+  "loanDate": "2026-09-28",
+  "outstandingAmount": 700,
+  "status": "ACTIVE"
+}
+
+
+### Delete loan
+DELETE http://localhost:8080/api/loans/1
+
+
+
+### =========================
+### REPAYMENTS
+### =========================
+
+### Get all repayments
+GET http://localhost:8080/api/repayments
+
+
+### Get repayment by ID
+GET http://localhost:8080/api/repayments/1
+
+
+### Create repayment for loan 1
+POST http://localhost:8080/api/repayments/loan/1
+Content-Type: application/json
+
+{
+  "amount": 300,
+  "repaymentDate": "2026-09-28"
+}
+
+
+### Update repayment
+PUT http://localhost:8080/api/repayments/1
+Content-Type: application/json
+
+{
+  "amount": 400,
+  "repaymentDate": "2026-09-28"
+}
+
+
+### Delete repayment
+DELETE http://localhost:8080/api/repayments/1

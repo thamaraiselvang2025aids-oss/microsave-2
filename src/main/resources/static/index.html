@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MicroSave - Self-Help Group Savings Tracker</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- =====================================================
+     HEADER
+===================================================== -->
+
+    <header class="main-header">
+
+        <div class="header-container">
+
+            <div>
+                <h1>MicroSave</h1>
+
+                <p>
+                    Self-Help Group Savings Tracker
+                </p>
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+     NAVIGATION
+===================================================== -->
+
+    <nav class="navbar">
+
+        <div class="nav-container">
+
+            <button type="button" class="nav-btn active" onclick="showSection('dashboard', this)">
+                Dashboard
+            </button>
+
+            <button type="button" class="nav-btn" onclick="showSection('members', this)">
+                Members
+            </button>
+
+            <button type="button" class="nav-btn" onclick="showSection('savings', this)">
+                Savings
+            </button>
+
+            <button type="button" class="nav-btn" onclick="showSection('loans', this)">
+                Loans
+            </button>
+
+            <button type="button" class="nav-btn" onclick="showSection('repayments', this)">
+                Repayments
+            </button>
+
+        </div>
+
+    </nav>
+
+
+    <!-- =====================================================
+     MAIN
+===================================================== -->
+
+    <main>
+
+        <!-- =================================================
+         DASHBOARD
+    ================================================== -->
+
+        <section id="dashboard" class="page-section">
+
+            <div class="page-heading">
+
+                <div>
+
+                    <h2>Dashboard</h2>
+
+                    <p>
+                        Overview of your self-help group
+                    </p>
+
+                </div>
+
+                <button type="button" class="primary-btn" onclick="loadDashboard()">
+                    ↻ Refresh
+                </button>
+
+            </div>
+
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        👥
+                    </div>
+
+                    <div>
+
+                        <div class="stat-title">
+                            Total Members
+                        </div>
+
+                        <div class="stat-value" id="memberCount">
+                            0
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        💰
+                    </div>
+
+                    <div>
+
+                        <div class="stat-title">
+                            Total Savings
+                        </div>
+
+                        <div class="stat-value" id="totalSavings">
+                            ₹0.00
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        🏦
+                    </div>
+
+                    <div>
+
+                        <div class="stat-title">
+                            Available Balance
+                        </div>
+
+                        <div class="stat-value" id="availableBalance">
+                            ₹0.00
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- DASHBOARD MEMBERS -->
+
+            <div class="dashboard-card">
+
+                <div class="dashboard-card-header">
+
+                    <h3>Members</h3>
+
+                    <button type="button" class="small-btn" onclick="showSectionById('members')">
+                        View All
+                    </button>
+
+                </div>
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Address</th>
+                                <th>Join Date</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="dashboardMembers"></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+            <!-- DASHBOARD SAVINGS -->
+
+            <div class="dashboard-card">
+
+                <div class="dashboard-card-header">
+
+                    <h3>Recent Savings</h3>
+
+                    <button type="button" class="small-btn" onclick="showSectionById('savings')">
+                        View All
+                    </button>
+
+                </div>
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>ID</th>
+                                <th>Member</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="dashboardSavings"></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+            <!-- DASHBOARD LOANS -->
+
+            <div class="dashboard-card">
+
+                <div class="dashboard-card-header">
+
+                    <h3>Loans</h3>
+
+                    <button type="button" class="small-btn" onclick="showSectionById('loans')">
+                        View All
+                    </button>
+
+                </div>
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>ID</th>
+                                <th>Member</th>
+                                <th>Amount</th>
+                                <th>Outstanding</th>
+                                <th>Status</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="dashboardLoans"></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+         MEMBERS
+    ================================================== -->
+
+        <section id="members" class="page-section hidden">
+
+            <div class="page-heading">
+
+                <div>
+
+                    <h2>Members</h2>
+
+                    <p>
+                        Manage self-help group members
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- ADD MEMBER -->
+
+            <div class="form-card">
+
+                <h3>Add New Member</h3>
+
+                <form id="memberForm">
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label for="memberName">
+                                Member Name
+                            </label>
+
+                            <input type="text" id="memberName" placeholder="Member Name" required>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="memberPhone">
+                                Phone Number
+                            </label>
+
+                            <input type="text" id="memberPhone" placeholder="Phone Number" required>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="memberAddress">
+                                Address
+                            </label>
+
+                            <input type="text" id="memberAddress" placeholder="Address" required>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="joinDate">
+                                Join Date
+                            </label>
+
+                            <input type="date" id="joinDate" required>
+
+                        </div>
+
+                    </div>
+
+
+                    <button type="submit" class="primary-btn">
+                        + Add Member
+                    </button>
+
+                </form>
+
+            </div>
+
+            <!-- =================================================
+             MEMBER FILTERS
+        ================================================== -->
+
+            <div class="filter-card">
+
+                <div class="filter-header">
+
+                    <div>
+                        <h3>Search & Filter Members</h3>
+
+                        <p>
+                            Find members quickly and filter by savings
+                        </p>
+                    </div>
+
+                    <button type="button" class="reset-btn" onclick="resetMemberFilters()">
+                        Reset
+                    </button>
+
+                </div>
+
+
+                <div class="filter-grid">
+
+                    <!-- SEARCH -->
+
+                    <div class="filter-group">
+
+                        <label for="memberSearch">
+                            Search Member
+                        </label>
+
+                        <input type="text" id="memberSearch" placeholder="Name, phone, address or ID..."
+                            oninput="applyMemberFilters()">
+
+                    </div>
+
+
+                    <!-- SORT -->
+
+                    <div class="filter-group">
+
+                        <label for="memberSort">
+                            Sort By
+                        </label>
+
+                        <select id="memberSort" onchange="applyMemberFilters()">
+
+                            <option value="id">
+                                ID
+                            </option>
+
+                            <option value="name">
+                                Name
+                            </option>
+
+                            <option value="joinDate">
+                                Join Date
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- DIRECTION -->
+
+                    <div class="filter-group">
+
+                        <label for="sortDirection">
+                            Order
+                        </label>
+
+                        <select id="sortDirection" onchange="applyMemberFilters()">
+
+                            <option value="asc">
+                                Ascending
+                            </option>
+
+                            <option value="desc">
+                                Descending
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- SAVINGS STATUS -->
+
+                    <div class="filter-group">
+
+                        <label for="savingsFilter">
+                            Savings Status
+                        </label>
+
+                        <select id="savingsFilter" onchange="applyMemberFilters()">
+
+                            <option value="all">
+                                All Members
+                            </option>
+
+                            <option value="hasSavings">
+                                Has Savings
+                            </option>
+
+                            <option value="noSavings">
+                                No Savings
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- MINIMUM SAVINGS -->
+
+                    <div class="filter-group">
+
+                        <label for="minimumSavings">
+                            Minimum Savings
+                        </label>
+
+                        <input type="number" id="minimumSavings" min="0" step="0.01" placeholder="Example: 1000"
+                            oninput="applyMemberFilters()">
+
+                    </div>
+
+                </div>
+
+
+                <div class="filter-result">
+
+                    <span id="memberResultCount">
+                        0 members
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- ALL MEMBERS -->
+
+            <div class="table-card">
+
+                <div class="table-card-header">
+
+                    <div>
+                        <h3>All Members</h3>
+                    </div>
+
+                    <button type="button" class="small-btn" onclick="loadMembers()">
+                        ↻ Refresh
+                    </button>
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Address</th>
+                                <th>Join Date</th>
+                                <th>Total Savings</th>
+                                <th>Actions</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="memberList"></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+         SAVINGS
+    ================================================== -->
+
+        <section id="savings" class="page-section hidden">
+
+            <div class="page-heading">
+
+                <div>
+
+                    <h2>Savings</h2>
+
+                    <p>
+                        Manage member savings contributions
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-card">
+
+                <h3>Add Savings</h3>
+
+                <form id="savingsForm">
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label for="savingsMemberId">
+                                Member
+                            </label>
+
+                            <select id="savingsMemberId" required>
+
+                                <option value="">
+                                    Select Member
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="savingsAmount">
+                                Amount
+                            </label>
+
+                            <input type="number" id="savingsAmount" min="1" step="0.01" placeholder="Amount" required>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="savingsDate">
+                                Contribution Date
+                            </label>
+
+                            <input type="date" id="savingsDate" required>
+
+                        </div>
+
+                    </div>
+
+
+                    <button type="submit" class="primary-btn">
+                        + Add Savings
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- =================================================
+             EDIT SAVINGS CARD
+        ================================================== -->
+            <div id="editSavingsCard" class="form-card hidden">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px;">
+                    <h3 style="margin-bottom:0;">Edit Savings</h3>
+                    <button type="button" class="small-btn btn-delete" onclick="closeEditSavingsCard()">Cancel</button>
+                </div>
+                <form id="editSavingsForm">
+                    <input type="hidden" id="editSavingsId">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="editSavingsAmount">Amount</label>
+                            <input type="number" id="editSavingsAmount" min="1" step="0.01" placeholder="Amount"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editSavingsDate">Contribution Date</label>
+                            <input type="date" id="editSavingsDate" required>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <button type="submit" class="primary-btn">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="table-card">
+
+                <div class="table-card-header">
+                    <h3>All Savings</h3>
+                </div>
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>ID</th>
+                                <th>Member</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="savingsList"></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+     LOANS
+================================================== -->
+
+        <section id="loans" class="page-section hidden">
+
+            <div class="page-heading">
+
+                <div>
+
+                    <h2>Loans</h2>
+
+                    <p>
+                        Manage group loans and payment deadlines
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+             CREATE LOAN
+        ================================================== -->
+
+            <div class="form-card">
+
+                <h3>Create Loan</h3>
+
+                <form id="loanForm">
+
+                    <div class="form-grid">
+
+
+                        <!-- MEMBER -->
+
+                        <div class="form-group">
+
+                            <label for="loanMemberId">
+                                Member
+                            </label>
+
+                            <select id="loanMemberId" required>
+
+                                <option value="">
+                                    Select Member
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- LOAN AMOUNT -->
+
+                        <div class="form-group">
+
+                            <label for="loanAmount">
+                                Loan Amount
+                            </label>
+
+                            <input type="number" id="loanAmount" min="1" step="0.01" placeholder="Loan Amount" required>
+
+                        </div>
+
+
+                        <!-- LOAN DATE -->
+
+                        <div class="form-group">
+
+                            <label for="loanDate">
+                                Loan Date
+                            </label>
+
+                            <input type="date" id="loanDate" required>
+
+                        </div>
+
+
+                        <!-- PAYMENT DEADLINE -->
+
+                        <div class="form-group">
+
+                            <label for="loanPaymentDeadline">
+                                Payment Deadline
+                            </label>
+
+                            <input type="date" id="loanPaymentDeadline" required>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <button type="submit" class="primary-btn">
+
+                        + Create Loan
+
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- =================================================
+             ALL LOANS
+        ================================================== -->
+
+            <!-- =================================================
+             EDIT LOAN CARD
+        ================================================== -->
+            <div id="editLoanCard" class="form-card hidden">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px;">
+                    <h3 style="margin-bottom:0;">Edit Loan</h3>
+                    <button type="button" class="small-btn btn-delete" onclick="closeEditLoanCard()">Cancel</button>
+                </div>
+                <form id="editLoanForm">
+                    <input type="hidden" id="editLoanId">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="editLoanAmount">Loan Amount</label>
+                            <input type="number" id="editLoanAmount" min="1" step="0.01" placeholder="Loan Amount"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editLoanDate">Loan Date</label>
+                            <input type="date" id="editLoanDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editLoanPaymentDeadline">Payment Deadline</label>
+                            <input type="date" id="editLoanPaymentDeadline" required>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <button type="submit" class="primary-btn">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="table-card">
+
+                <div class="table-card-header">
+
+                    <div>
+
+                        <h3>All Loans</h3>
+
+                    </div>
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>ID</th>
+
+                                <th>Member</th>
+
+                                <th>Amount</th>
+
+                                <th>Outstanding</th>
+
+                                <th>Payment Deadline</th>
+
+                                <th>Status</th>
+
+                                <th>Actions</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="loanList"></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+         REPAYMENTS
+    ================================================== -->
+
+        <section id="repayments" class="page-section hidden">
+
+            <div class="page-heading">
+
+                <div>
+
+                    <h2>Repayments</h2>
+
+                    <p>
+                        Track loan repayments
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-card">
+
+                <h3>Add Repayment</h3>
+
+                <form id="repaymentForm">
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label for="repaymentLoanId">
+                                Loan
+                            </label>
+
+                            <select id="repaymentLoanId" required>
+
+                                <option value="">
+                                    Select Loan
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="repaymentAmount">
+                                Amount
+                            </label>
+
+                            <input type="number" id="repaymentAmount" min="1" step="0.01" placeholder="Amount" required>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="repaymentDate">
+                                Repayment Date
+                            </label>
+
+                            <input type="date" id="repaymentDate" required>
+
+                        </div>
+
+                    </div>
+
+
+                    <button type="submit" class="primary-btn">
+                        + Add Repayment
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- =================================================
+             EDIT REPAYMENT CARD
+        ================================================== -->
+            <div id="editRepaymentCard" class="form-card hidden">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px;">
+                    <h3 style="margin-bottom:0;">Edit Repayment</h3>
+                    <button type="button" class="small-btn btn-delete"
+                        onclick="closeEditRepaymentCard()">Cancel</button>
+                </div>
+                <form id="editRepaymentForm">
+                    <input type="hidden" id="editRepaymentId">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="editRepaymentAmount">Amount</label>
+                            <input type="number" id="editRepaymentAmount" min="1" step="0.01" placeholder="Amount"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editRepaymentDate">Repayment Date</label>
+                            <input type="date" id="editRepaymentDate" required>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <button type="submit" class="primary-btn">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="table-card">
+
+                <div class="table-card-header">
+                    <h3>All Repayments</h3>
+                </div>
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>ID</th>
+                                <th>Loan ID</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="repaymentList"></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
