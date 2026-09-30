@@ -126,74 +126,16 @@ Open Source. Feel free to fork and customize for your own financial tracking nee
 ---
 
 ## MySQL Workbench Commands
-If you decide to migrate from the default in-memory H2 database to MySQL, you can run the following SQL commands in **MySQL Workbench** to set up your schema and insert sample data.
-
-### 1. Database Creation
-```sql
-CREATE DATABASE IF NOT EXISTS microsave_db;
-USE microsave_db;
-```
-
-### 2. Table Creation (DDL)
-*(Note: Spring Data JPA will auto-generate these if `spring.jpa.hibernate.ddl-auto=update` is set, but here is the manual schema)*
+If you decide to migrate from the default in-memory H2 database to MySQL, you can use the following commands in **MySQL Workbench** to interact with your database:
 
 ```sql
-CREATE TABLE member (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    phone VARCHAR(20),
-    address VARCHAR(255),
-    join_date DATE
-);
-
-CREATE TABLE savings (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    amount DOUBLE NOT NULL,
-    contribution_date DATE,
-    member_id BIGINT,
-    FOREIGN KEY (member_id) REFERENCES member(id) ON DELETE CASCADE
-);
-
-CREATE TABLE loan (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    amount DOUBLE NOT NULL,
-    loan_date DATE,
-    payment_deadline DATE,
-    status VARCHAR(50),
-    member_id BIGINT,
-    FOREIGN KEY (member_id) REFERENCES member(id) ON DELETE CASCADE
-);
-
-CREATE TABLE repayment (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    repayment_amount DOUBLE NOT NULL,
-    repayment_date DATE,
-    loan_id BIGINT,
-    FOREIGN KEY (loan_id) REFERENCES loan(id) ON DELETE CASCADE
-);
-```
-
-### 3. Sample Data Insertion (DML)
-```sql
--- Insert Members
-INSERT INTO member (name, phone, address, join_date) 
-VALUES ('John Doe', '9876543210', '123 Tech Street', '2024-01-10');
-
-INSERT INTO member (name, phone, address, join_date) 
-VALUES ('Jane Smith', '1234567890', '456 Innovation Ave', '2024-02-15');
-
--- Insert Savings
-INSERT INTO savings (amount, contribution_date, member_id) 
-VALUES (5000.0, '2024-03-01', 1);
-
-INSERT INTO savings (amount, contribution_date, member_id) 
-VALUES (2500.0, '2024-03-05', 2);
-
--- Insert Loans
-INSERT INTO loan (amount, loan_date, payment_deadline, status, member_id) 
-VALUES (10000.0, '2024-03-10', '2024-09-10', 'PENDING', 1);
-
--- Insert Repayments (Paying 2000 towards John's loan)
-INSERT INTO repayment (repayment_amount, repayment_date, loan_id) 
-VALUES (2000.0, '2024-04-10', 1);
+CREATE DATABASE microsave;
+SHOW DATABASES;
+use microsave;
+USE microsave;
+SHOW TABLES;
+SELECT * FROM loans;
+select * FROM members;
+select * from repayments;
+select * from savings;
 ```
