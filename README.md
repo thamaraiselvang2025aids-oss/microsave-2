@@ -37,24 +37,88 @@ MicroSave is a modern, lightweight microfinance and savings management applicati
    *(On Windows, use `.\mvnw.cmd spring-boot:run`)*
 
 3. **Access the Application:**
-   Open your browser and navigate to:
-   ```
-   http://localhost:8080
-   ```
+   Open your browser and navigate to: `http://localhost:8080`
 
-## Application Structure
-- **Backend Code:** `/src/main/java/com/example/microsave/`
-  - Controllers, Services, and Entities are structured cleanly for easy maintenance.
-- **Frontend Code:** `/src/main/resources/static/`
-  - `index.html`: The main SPA layout and modal structures.
-  - `style.css`: All the glassmorphism UI styles, gradients, and responsive grids.
-  - `script.js`: Frontend logic for fetching data, DOM manipulation, and dynamic dashboard calculations.
+---
 
-## API Endpoints
-- **Members:** `GET`, `POST`, `PUT`, `DELETE` at `/api/members`
-- **Savings:** `GET`, `POST`, `PUT`, `DELETE` at `/api/savings`
-- **Loans:** `GET`, `POST`, `PUT`, `DELETE` at `/api/loans`
-- **Repayments:** `GET`, `POST`, `PUT`, `DELETE` at `/api/repayments`
+## Project Structure
+
+```text
+microsave-2/
+├── src/
+│   ├── main/
+│   │   ├── java/com/example/microsave/
+│   │   │   ├── controller/      # REST API Endpoints (Member, Loan, Savings, Repayment)
+│   │   │   ├── entity/          # JPA Entities mapping to DB tables
+│   │   │   ├── repository/      # Spring Data JPA Interfaces
+│   │   │   ├── service/         # Business Logic layer
+│   │   │   └── MicrosaveApplication.java # Spring Boot Main Class
+│   │   │
+│   │   └── resources/
+│   │       ├── static/          # Frontend SPA (Vanilla HTML/CSS/JS)
+│   │       │   ├── index.html   # Main Dashboard & UI layout
+│   │       │   ├── script.js    # API Fetching & DOM manipulations
+│   │       │   └── style.css    # Dark Glassmorphism CSS styling
+│   │       │
+│   │       └── application.properties # H2 Database & Server Configurations
+│   │
+│   └── test/                    # JUnit and Spring Boot Tests
+├── pom.xml                      # Maven Dependencies
+└── README.md                    # Project Documentation
+```
+
+---
+
+## Postman API Requests
+Use the following JSON structures and endpoints to test the API via Postman. All requests should be made to `http://localhost:8080`.
+
+### 1. Members
+**Create Member (POST `/api/members`)**
+```json
+{
+  "name": "John Doe",
+  "phone": "1234567890",
+  "address": "123 Main St, Tech City",
+  "joinDate": "2024-01-15"
+}
+```
+**Get All Members (GET `/api/members`)**
+
+### 2. Savings
+**Create Savings Deposit (POST `/api/savings`)**
+```json
+{
+  "member": { "id": 1 },
+  "amount": 5000.0,
+  "contributionDate": "2024-02-01"
+}
+```
+**Get All Savings (GET `/api/savings`)**
+
+### 3. Loans
+**Create Loan (POST `/api/loans`)**
+```json
+{
+  "member": { "id": 1 },
+  "amount": 10000.0,
+  "loanDate": "2024-02-10",
+  "paymentDeadline": "2024-08-10"
+}
+```
+**Get All Loans (GET `/api/loans`)**
+
+### 4. Repayments
+**Process Repayment (POST `/api/repayments`)**
+```json
+{
+  "loan": { "id": 1 },
+  "repaymentAmount": 2000.0,
+  "repaymentDate": "2024-03-05"
+}
+```
+**Get All Repayments (GET `/api/repayments`)**
+
+---
 
 ## License
 Open Source. Feel free to fork and customize for your own financial tracking needs!
