@@ -289,6 +289,8 @@ async function loadDashboard() {
         const members =
             await memberResponse.json();
 
+        allMembers = members;
+
         const memberCount =
             document.getElementById(
                 "memberCount"
@@ -1172,10 +1174,8 @@ function renderMembers(
 
                         
 
-                        <button
-                            type="button"
-                            class="btn-delete"
-                            onclick="deleteMember(${member.id})">
+                        <button type="button" class="btn-edit" onclick="editMember(${member.id})">Edit</button>
+                            <button type="button" class="btn-delete" onclick="deleteMember(${member.id})">
 
                             Delete
 
@@ -1357,6 +1357,71 @@ if (memberForm) {
     );
 }
 
+
+/* =====================================================
+   EDIT MEMBER
+===================================================== */
+async function editMember(id) {
+    try {
+        const response = await fetch(`${API}/members/${id}`);
+        if (!response.ok) throw new Error("Member not found");
+        const member = await response.json();
+        
+        document.getElementById("editMemberId").value = member.id;
+        document.getElementById("editMemberName").value = member.name || "";
+        document.getElementById("editMemberPhone").value = member.phone || "";
+        document.getElementById("editMemberAddress").value = member.address || "";
+        document.getElementById("editMemberJoinDate").value = member.joinDate || "";
+        
+        const card = document.getElementById("editMemberCard");
+        if (!card) throw new Error("Edit card not found");
+        card.classList.remove("hidden");
+        card.scrollIntoView({ behavior: 'smooth' });
+    } catch (error) {
+        console.error("Edit member error:", error);
+        alert("Unable to open edit form.\n\n" + error.message);
+    }
+}
+
+function closeEditMemberCard() {
+    const card = document.getElementById("editMemberCard");
+    if (!card) return;
+    card.classList.add("hidden");
+    const form = document.getElementById("editMemberForm");
+    if (form) form.reset();
+}
+
+const editMemberForm = document.getElementById("editMemberForm");
+if (editMemberForm) {
+    editMemberForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        try {
+            const id = document.getElementById("editMemberId").value;
+            const member = {
+                name: document.getElementById("editMemberName").value.trim(),
+                phone: document.getElementById("editMemberPhone").value.trim(),
+                address: document.getElementById("editMemberAddress").value.trim(),
+                joinDate: document.getElementById("editMemberJoinDate").value
+            };
+            const response = await fetch(`${API}/members/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(member)
+            });
+            if (!response.ok) {
+                const message = await response.text();
+                throw new Error(message || "Failed to update member");
+            }
+            alert("Member updated successfully!");
+            closeEditMemberCard();
+            await loadMembers();
+            await loadDashboard();
+        } catch (error) {
+            console.error("Update member error:", error);
+            alert("Failed to update member.\n\n" + error.message);
+        }
+    });
+}
 
 /* =====================================================
    DELETE MEMBER
@@ -2875,3 +2940,142 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 });
+
+
+/* =====================================================
+   DASHBOARD MEMBER SEARCH
+===================================================== */
+const dashboardSearchInput = document.getElementById("dashboardSearchInput");
+const dashboardSearchResults = document.getElementById("dashboardSearchResults");
+const dashboardProfileResult = document.getElementById("dashboardProfileResult");
+const dashboardProfileContent = document.getElementById("dashboardProfileContent");
+
+if (dashboardSearchInput) {
+    dashboardSearchInput.addEventListener("input", function() {
+        const query = this.value.toLowerCase().trim();
+        
+        if (query.length < 1) {
+            dashboardSearchResults.classList.add("hidden");
+            return;
+        }
+        
+        const matches = allMembers.filter(m => 
+            (m.name && m.name.toLowerCase().includes(query)) || 
+            (m.phone && m.phone.includes(query)) ||
+            m.id.toString() === query
+        ).slice(0, 5);
+        
+        if (matches.length > 0) {
+            dashboardSearchResults.innerHTML = matches.map(m => `
+                <div class="search-item" onclick="openDashboardProfile(${m.id})">
+                    <div>
+                        <strong>${escapeHtml(m.name)}</strong>
+                        <span style="color:#94a3b8; font-size:12px; margin-left:8px;">ID: ${m.id}</span>
+                    </div>
+                    <span style="color:#94a3b8; font-size:12px;">${escapeHtml(m.phone || "")}</span>
+                </div>
+            `).join("");
+            dashboardSearchResults.classList.remove("hidden");
+        } else {
+            dashboardSearchResults.innerHTML = `<div class="search-item" style="color:#94a3b8;">No members found</div>`;
+            dashboardSearchResults.classList.remove("hidden");
+        }
+    });
+
+    // Hide dropdown when clicking outside
+    document.addEventListener("click", function(e) {
+        if (!e.target.closest(".filter-grid")) {
+            if(dashboardSearchResults) dashboardSearchResults.classList.add("hidden");
+        }
+    });
+}
+
+function closeDashboardProfile() {
+    if(dashboardProfileResult) dashboardProfileResult.classList.add("hidden");
+    if(dashboardSearchInput) dashboardSearchInput.value = "";
+}
+
+function openDashboardProfile(memberId) {
+    if(dashboardSearchResults) dashboardSearchResults.classList.add("hidden");
+    
+    const member = allMembers.find(m => m.id === memberId);
+    if (!member) return;
+    
+    // Calculate total savings
+    const memberSavings = allSavings.filter(s => s.member && s.member.id === member.id);
+    const totalSavings = memberSavings.reduce((sum, s) => sum + (s.amount || 0), 0);
+    
+    // Get loans
+    const memberLoans = allLoans.filter(l => l.member && l.member.id === member.id);
+    const activeLoans = memberLoans.filter(l => l.status !== "PAID");
+    const totalOutstanding = activeLoans.reduce((sum, l) => sum + (l.outstandingAmount || 0), 0);
+    
+    // Get Repayments (if any loaded in global context, else we only have loan status)
+    
+    let loansHtml = "";
+    if (memberLoans.length > 0) {
+        loansHtml = `
+            <table style="width:100%; font-size:13px; text-align:left; border-collapse: collapse;">
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color:#94a3b8;">
+                    <th style="padding:8px 0;">Amount</th>
+                    <th style="padding:8px 0;">Outstanding</th>
+                    <th style="padding:8px 0;">Deadline</th>
+                    <th style="padding:8px 0;">Status</th>
+                </tr>
+                ${memberLoans.map(l => `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding:8px 0;">${formatCurrency(l.amount)}</td>
+                        <td style="padding:8px 0;">${formatCurrency(l.outstandingAmount)}</td>
+                        <td style="padding:8px 0;">${l.paymentDeadline || "-"}</td>
+                        <td style="padding:8px 0;">
+                            <span class="${l.status === 'PAID' ? 'status-paid' : (l.status === 'OVERDUE' ? 'status-overdue' : (l.status === 'DUE SOON' ? 'status-due-soon' : 'status-pending'))}" style="padding:2px 8px; font-size:10px;">
+                                ${l.status || "PENDING"}
+                            </span>
+                        </td>
+                    </tr>
+                `).join('')}
+            </table>
+        `;
+    } else {
+        loansHtml = `<p style="color:#64748b; font-size:13px;">No loan history.</p>`;
+    }
+
+    const html = `
+        <div class="profile-grid">
+            <div class="profile-stat">
+                <span>Total Savings</span>
+                <strong style="color: #34d399;">${formatCurrency(totalSavings)}</strong>
+            </div>
+            <div class="profile-stat">
+                <span>Outstanding Loan</span>
+                <strong style="color: ${totalOutstanding > 0 ? '#fb7185' : '#94a3b8'};">${formatCurrency(totalOutstanding)}</strong>
+            </div>
+            <div class="profile-stat">
+                <span>Join Date</span>
+                <strong>${member.joinDate || "N/A"}</strong>
+            </div>
+        </div>
+        
+        <div class="profile-section">
+            <h4>Personal Details</h4>
+            <div style="font-size:14px; color:#e2e8f0; line-height:1.6; background: rgba(0,0,0,0.2); padding: 16px; border-radius: 12px;">
+                <strong>Name:</strong> ${escapeHtml(member.name)} <br/>
+                <strong>Phone:</strong> ${escapeHtml(member.phone || "N/A")} <br/>
+                <strong>Address:</strong> ${escapeHtml(member.address || "N/A")} <br/>
+            </div>
+        </div>
+        
+        <div class="profile-section">
+            <h4>Loan History & Deadlines</h4>
+            <div style="background: rgba(0,0,0,0.2); padding: 16px; border-radius: 12px; overflow-x:auto;">
+                ${loansHtml}
+            </div>
+        </div>
+    `;
+    
+    if(dashboardProfileContent) dashboardProfileContent.innerHTML = html;
+    if(dashboardProfileResult) {
+        dashboardProfileResult.classList.remove("hidden");
+        dashboardProfileResult.scrollIntoView({ behavior: 'smooth' });
+    }
+}

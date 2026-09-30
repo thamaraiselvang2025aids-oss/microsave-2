@@ -165,6 +165,35 @@
             </div>
 
 
+            <!-- =================================================
+                 DASHBOARD SEARCH
+            ================================================== -->
+            <div class="filter-card" style="margin-bottom: 24px;">
+                <div class="filter-header" style="border-bottom: none; padding-bottom: 0;">
+                    <div>
+                        <h3>Member Quick Search</h3>
+                        <p>Search a member to view their complete profile (savings, loans, and deadlines)</p>
+                    </div>
+                </div>
+                <div class="filter-grid" style="padding: 20px 24px; position: relative;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <input type="text" id="dashboardSearchInput" placeholder="Enter member name..." autocomplete="off">
+                    </div>
+                    <div id="dashboardSearchResults" class="search-dropdown hidden"></div>
+                </div>
+            </div>
+
+            <!-- DASHBOARD PROFILE RESULT -->
+            <div class="dashboard-card hidden" id="dashboardProfileResult" style="border-color: rgba(56, 189, 248, 0.4); box-shadow: 0 0 20px rgba(56, 189, 248, 0.15);">
+                <div class="dashboard-card-header">
+                    <h3>Member Profile Overview</h3>
+                    <button type="button" class="small-btn btn-delete" onclick="closeDashboardProfile()">Close Profile</button>
+                </div>
+                <div id="dashboardProfileContent" style="padding: 24px;">
+                    <!-- JS will populate this dynamically -->
+                </div>
+            </div>
+
             <!-- DASHBOARD MEMBERS -->
 
             <div class="dashboard-card">
@@ -366,6 +395,40 @@
 
                 </form>
 
+            </div>
+
+            <!-- =================================================
+                 EDIT MEMBER CARD
+            ================================================== -->
+            <div id="editMemberCard" class="form-card hidden">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px;">
+                    <h3 style="margin-bottom:0;">Edit Member</h3>
+                    <button type="button" class="small-btn btn-delete" onclick="closeEditMemberCard()">Cancel</button>
+                </div>
+                <form id="editMemberForm">
+                    <input type="hidden" id="editMemberId">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="editMemberName">Member Name</label>
+                            <input type="text" id="editMemberName" placeholder="Member Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editMemberPhone">Phone Number</label>
+                            <input type="text" id="editMemberPhone" placeholder="Phone Number" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editMemberAddress">Address</label>
+                            <input type="text" id="editMemberAddress" placeholder="Address" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editMemberJoinDate">Join Date</label>
+                            <input type="date" id="editMemberJoinDate" required>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <button type="submit" class="primary-btn">Save Changes</button>
+                    </div>
+                </form>
             </div>
 
             <!-- =================================================
