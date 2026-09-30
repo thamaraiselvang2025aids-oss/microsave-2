@@ -70,53 +70,18 @@ microsave-2/
 ---
 
 ## Postman API Requests
-Use the following JSON structures and endpoints to test the API via Postman. All requests should be made to `http://localhost:8080`.
+You can quickly test the REST API in **Postman** using the following endpoints (ensure your server is running on `http://localhost:8080`):
 
-### 1. Members
-**Create Member (POST `/api/members`)**
-```json
-{
-  "name": "John Doe",
-  "phone": "1234567890",
-  "address": "123 Main St, Tech City",
-  "joinDate": "2024-01-15"
-}
+```http
+POST http://localhost:8080/api/members
+GET http://localhost:8080/api/members
+POST http://localhost:8080/api/savings
+GET http://localhost:8080/api/savings
+POST http://localhost:8080/api/loans
+GET http://localhost:8080/api/loans
+POST http://localhost:8080/api/repayments
+GET http://localhost:8080/api/repayments
 ```
-**Get All Members (GET `/api/members`)**
-
-### 2. Savings
-**Create Savings Deposit (POST `/api/savings`)**
-```json
-{
-  "member": { "id": 1 },
-  "amount": 5000.0,
-  "contributionDate": "2024-02-01"
-}
-```
-**Get All Savings (GET `/api/savings`)**
-
-### 3. Loans
-**Create Loan (POST `/api/loans`)**
-```json
-{
-  "member": { "id": 1 },
-  "amount": 10000.0,
-  "loanDate": "2024-02-10",
-  "paymentDeadline": "2024-08-10"
-}
-```
-**Get All Loans (GET `/api/loans`)**
-
-### 4. Repayments
-**Process Repayment (POST `/api/repayments`)**
-```json
-{
-  "loan": { "id": 1 },
-  "repaymentAmount": 2000.0,
-  "repaymentDate": "2024-03-05"
-}
-```
-**Get All Repayments (GET `/api/repayments`)**
 
 ---
 
